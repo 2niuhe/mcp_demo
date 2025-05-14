@@ -107,7 +107,7 @@ class MCPClient:
 
         for tool_name, test_params in TOOL_TESTS.items():
             if tool_name in available_tool_names:
-                print(f"\n Test Tool: {tool_name}")
+                print(f"\nTest Tool: {tool_name}")
                 result = await self.call_tool(tool_name, test_params)
                 success = "Success" if "Fail" not in result else "Failed"
                 results.append({"tool": tool_name, "result": result, "status": success})
