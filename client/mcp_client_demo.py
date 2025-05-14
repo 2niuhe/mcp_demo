@@ -27,14 +27,14 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Load environment variables from .env file
+load_dotenv()
 
 class Config:
     """Simple configuration manager for the MCP client."""
 
     def __init__(self) -> None:
         """Initialize configuration with environment variables."""
-        # Look for .env file in the current directory
-        load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
         self.api_key = os.getenv("LLM_API_KEY")
         
     @property

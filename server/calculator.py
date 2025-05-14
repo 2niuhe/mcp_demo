@@ -31,23 +31,6 @@ def divide(a: int, b: int) -> float:
     """Divide two numbers"""
     return float(a / b)
 
-# power tool
-@mcp.tool()
-def power(a: int, b: int) -> int:
-    """Power of two numbers"""
-    return int(a ** b)
-
-# square root tool
-@mcp.tool()
-def sqrt(a: int) -> float:
-    """Square root of a number"""
-    return float(a ** 0.5)
-
-# cube root tool
-@mcp.tool()
-def cbrt(a: int) -> float:
-    """Cube root of a number"""
-    return float(a ** (1/3))
 
 # factorial tool
 @mcp.tool()
