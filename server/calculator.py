@@ -1,81 +1,103 @@
-# basic import 
-from mcp.server.fastmcp import FastMCP
-import math
+#!/usr/bin/env python3
+"""
+Calculator MCP服务器
+使用FastMCP实现标准MCP协议
+"""
 
-# instantiate an MCP server client
+import logging
+from mcp.server.fastmcp import FastMCP
+
+# 配置日志
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("calculator-mcp-server")
+
+# 初始化FastMCP服务器
 mcp = FastMCP("Calculator MCP Server")
 
-# DEFINE TOOLS
 
-#addition tool
 @mcp.tool()
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return int(a + b)
+def add(a: float, b: float) -> float:
+    """Add two numbers(两个数字相加)
 
-# subtraction tool
-@mcp.tool()
-def subtract(a: int, b: int) -> int:
-    """Subtract two numbers"""
-    return int(a - b)
-
-# multiplication tool
-@mcp.tool()
-def multiply(a: int, b: int) -> int:
-    """Multiply two numbers"""
-    return int(a * b)
-
-#  division tool
-@mcp.tool() 
-def divide(a: int, b: int) -> float:
-    """Divide two numbers"""
-    return float(a / b)
+    Parameters:
+        a (float): First number to add
+        b (float): Second number to add
+    
+    Returns:
+        float: The sum of a and b.
+    """
+    try:
+        result = a + b
+        logger.info(f"Addition: {a} + {b} = {result}")
+        return result
+    except Exception as e:
+        logger.error(f"Failed to add numbers: {e}")
+        raise RuntimeError(f"Failed to add numbers: {str(e)}")
 
 
-# factorial tool
-@mcp.tool()
-def factorial(a: int) -> int:
-    """factorial of a number"""
-    return int(math.factorial(a))
-
-# log tool
-@mcp.tool()
-def log(a: int) -> float:
-    """log of a number"""
-    return float(math.log(a))
-
-# remainder tool
-@mcp.tool()
-def remainder(a: int, b: int) -> int:
-    """remainder of two numbers divison"""
-    return int(a % b)
-
-# sin tool
-@mcp.tool()
-def sin(a: int) -> float:
-    """sin of a number"""
-    return float(math.sin(a))
-
-# cos tool
-@mcp.tool()
-def cos(a: int) -> float:
-    """cos of a number"""
-    return float(math.cos(a))
-
-# tan tool
-@mcp.tool()
-def tan(a: int) -> float:
-    """tan of a number"""
-    return float(math.tan(a))
-
-# DEFINE RESOURCES
-
-# Add a dynamic greeting resource
-@mcp.resource("greeting://{name}")
-def get_greeting(name: str) -> str:
-    """Get a personalized greeting"""
-    return f"Hello, {name}!"
-
-# execute and return the stdio output
-if __name__ == "__main__":
+def main_stdio():
+    """STDIO传输模式入口点"""
+    logger.info("启动Calculator MCP服务器 (STDIO传输模式)")
     mcp.run(transport="stdio")
+
+
+def main_remote(host: str = "127.0.0.1", port: int = 8008, transport: str = "http"):
+    """HTTP传输模式入口点"""
+    import uvicorn
+
+    logger.info(f"启动Calculator MCP服务器 ({transport.upper()}传输模式) - {host}:{port}")
+    if transport == "sse":
+        app = mcp.sse_app()
+    else:
+        app = mcp.streamable_http_app()
+    uvicorn.run(app, host=host, port=port)
+
+
+def main_http_with_args():
+    """带命令行参数解析的HTTP服务器启动器"""
+    import argparse
+    import sys
+
+    # 如果从主脚本调用，需要过滤掉 --http 参数
+    argv = sys.argv[1:]
+    if argv and argv[0] == "--http":
+        argv = argv[1:]
+
+    parser = argparse.ArgumentParser(description="Calculator MCP服务器 - HTTP传输模式")
+    parser.add_argument("--host", default="127.0.0.1", help="绑定的主机地址")
+    parser.add_argument("--port", type=int, default=8008, help="绑定的端口号")
+
+    args = parser.parse_args(argv)
+    main_remote(args.host, args.port)
+
+
+def main_sse_with_args():
+    """带命令行参数解析的SSE服务器启动器"""
+    import argparse
+    import sys
+
+    # 如果从主脚本调用，需要过滤掉 --sse 参数
+    argv = sys.argv[1:]
+    if argv and argv[0] == "--sse":
+        argv = argv[1:]
+
+    parser = argparse.ArgumentParser(description="Calculator MCP服务器 - SSE传输模式")
+    parser.add_argument("--host", default="127.0.0.1", help="绑定的主机地址")
+    parser.add_argument("--port", type=int, default=8008, help="绑定的端口号")
+
+    args = parser.parse_args(argv)
+    main_remote(args.host, args.port, transport="sse")
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) > 1 and sys.argv[1] == "--http":
+        # HTTP模式：python calculator.py --http [--host HOST] [--port PORT]
+        main_http_with_args()
+    elif len(sys.argv) > 1 and sys.argv[1] == "--sse":
+        # SSE模式：python calculator.py --sse [--host HOST] [--port PORT]
+        main_sse_with_args()
+    else:
+        # 默认使用STDIO模式
+        main_stdio()

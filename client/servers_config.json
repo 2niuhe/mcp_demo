@@ -4,16 +4,6 @@
       "command": "python",
       "args": ["../server/calculator.py"],
       "env": {}
-    },
-    "file_manager": {
-      "command": "python",
-      "args": ["../server/file_manager.py"],
-      "env": {}
-    },
-    "weather_service": {
-      "command": "python",
-      "args": ["../server/weather_service.py"],
-      "env": {}
     }
   }
 }

@@ -1,13 +1,13 @@
 # MCP Client Demo
 
-A simplified implementation of an MCP client that connects to MCP servers, lists available tools, and allows execution of tools through a simple chat interface.
+A simplified MCP client that connects to MCP servers and demonstrates basic tool listing and execution functionality.
 
 ## Features
 
-- Connects to multiple MCP servers defined in the configuration file
+- Connects to MCP servers defined in the configuration file
 - Lists available tools from all connected servers
-- Allows you to execute tools interactively
-- Provides a chat mode that uses an LLM to interpret requests and execute tools
+- Allows interactive tool execution with parameter input
+- Clean, minimal implementation for learning MCP protocol
 
 ## Setup
 
@@ -16,18 +16,13 @@ A simplified implementation of an MCP client that connects to MCP servers, lists
    ```bash
    pip install -r requirements.txt
    ```
-3. Copy `.env.example` to `.env` and add your API keys:
-   ```bash
-   cp .env.example .env
-   # Then edit .env with your actual API keys
-   ```
 
 ## Configuration
 
 The client is configured using the `servers_config.json` file, which defines the MCP servers to connect to. Each server entry includes:
 
 - `command`: The command to run the server (e.g., `python`)
-- `args`: The arguments to pass to the command (e.g., `["calculator.py"]`)
+- `args`: The arguments to pass to the command (e.g., `["../server/calculator.py"]`)
 - `env`: Optional environment variables to set for the server
 
 Example configuration:
@@ -36,12 +31,7 @@ Example configuration:
   "mcpServers": {
     "calculator": {
       "command": "python",
-      "args": ["calculator.py"],
-      "env": {}
-    },
-    "file_manager": {
-      "command": "python",
-      "args": ["file_manager.py"],
+      "args": ["../server/calculator.py"],
       "env": {}
     }
   }
@@ -57,30 +47,60 @@ python mcp_client_demo.py
 
 ### Available Commands
 
-- `tools`: List all available tools from all connected servers
-- `execute`: Execute a tool interactively
-- `chat`: Start chat mode with LLM (requires API key)
-- `help`: Show available commands
-- `exit`/`quit`: Exit the program
+- `tools` - List all available tools from all connected servers
+- `execute` - Execute a tool interactively
+- `exit` - Exit the program
 
-### Chat Mode
+### Example Workflow
 
-The chat mode uses the DeepSeek model to interpret your requests and execute appropriate tools. When the LLM determines a tool should be used, it will format its response as a JSON object with the server, tool, and arguments. The client will then execute the tool and send the result back to the LLM for a final response.
+1. Start the client
+2. Use `tools` command to see available tools
+3. Use `execute` command to run a tool:
+   - Select the server name
+   - Enter the tool name
+   - Provide required parameters
+   - See the execution result
 
-## Environment Variables
+## Example Session
 
-- `OPENWEATHER_API_KEY`: API key for the OpenWeatherMap service (used by the weather_service MCP server)
-- `LLM_API_KEY`: API key for the DeepSeek LLM service (used by the chat mode)
+```
+=== MCP Client Demo ===
+Connecting to servers...
 
-## Adding New MCP Servers
+Commands:
+  1. tools - List available tools
+  2. execute - Execute a tool
+  3. exit - Exit the program
 
-To add a new MCP server:
+Enter command: tools
 
-1. Add the server configuration to `servers_config.json`
-2. Restart the client
+=== Available Tools ===
 
-## Troubleshooting
+Server: calculator
+  Tool: add
+    Description: Add two numbers(两个数字相加)
+    Parameters:
+      - a: First number (required)
+      - b: Second number (required)
 
-- If you encounter connection issues, make sure the MCP servers are running
-- If the chat mode doesn't work, check your LLM API key in the `.env` file
-- For other issues, check the logs for error messages
+Enter command: execute
+
+Enter server name: calculator
+Enter tool name: add
+Enter arguments:
+  a (number): 5
+  b (number): 3
+
+Result: 8.0
+```
+
+## Architecture
+
+This simplified implementation demonstrates:
+
+- **Core MCP Protocol**: Basic client-server communication
+- **Tool Discovery**: Listing available tools from servers
+- **Tool Execution**: Interactive parameter input and execution
+- **Clean Structure**: Minimal code for easy understanding
+
+Perfect for learning the MCP protocol basics!

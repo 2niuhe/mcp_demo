@@ -53,37 +53,7 @@ A simple calculator that provides mathematical operations as MCP tools.
 python calculator.py
 ```
 
-### 2. File Manager Server (`file_manager.py`)
 
-A file management server that provides file system operations as MCP tools.
-
-**Features:**
-- List files in a directory
-- Read file contents
-- Write content to files
-- Create directories
-- Get file information
-- Search for files
-
-**Run the server:**
-```bash
-python file_manager.py
-```
-
-### 3. Weather Service Server (`weather_service.py`)
-
-A weather service that fetches data from OpenWeatherMap API.
-
-**Features:**
-- Get current weather for a city
-- Get weather forecast for up to 5 days
-- Get air pollution data for a location
-- Get geocoding information for a city
-
-**Run the server:**
-```bash
-python weather_service.py
-```
 
 ## Testing with MCP Inspector
 

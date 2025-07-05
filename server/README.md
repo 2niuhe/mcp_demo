@@ -1,70 +1,79 @@
-# MCP Server Examples
+# Calculator MCP Server
 
-This directory contains examples of Model Context Protocol (MCP) servers implemented using the Python MCP SDK.
+A simple calculator MCP server that demonstrates the Model Context Protocol (MCP) with multiple transport implementations.
 
-## Available MCP Servers
+## Features
 
-### 1. Calculator Server (`calculator.py`)
+- **Single Tool**: Addition operation only (for demo simplicity)
+- **Three Transport Modes**: STDIO, HTTP, and SSE
+- **Clean Architecture**: Single file implementation with proper error handling and logging
 
-A simple calculator that provides mathematical operations as MCP tools.
+## Usage
 
-**Features:**
-- Basic arithmetic operations (add, subtract, multiply, divide)
-- Advanced math functions (power, square root, cube root, factorial)
-- Trigonometric functions (sin, cos, tan)
-- Logarithmic functions
+### STDIO Transport (Default)
 
-**Run the server:**
 ```bash
 python calculator.py
 ```
 
-### 2. File Manager Server (`file_manager.py`)
+This is the default mode that communicates through standard input/output, typically used by MCP clients.
 
-A file management server that provides file system operations as MCP tools.
+### HTTP Transport
 
-**Features:**
-- List files in a directory
-- Read file contents
-- Write content to files
-- Create directories
-- Get file information
-- Search for files
-
-**Run the server:**
 ```bash
-python file_manager.py
+python calculator.py --http
 ```
 
-### 3. Weather Service Server (`weather_service.py`)
+Or with custom host and port:
 
-A weather service that fetches data from OpenWeatherMap API.
-
-**Features:**
-- Get current weather for a city
-- Get weather forecast for up to 5 days
-- Get air pollution data for a location
-- Get geocoding information for a city
-
-**Setup:**
-1. Copy `.env.example` to `.env` in the root directory
-2. Add your OpenWeatherMap API key to the `.env` file
-
-**Run the server:**
 ```bash
-python weather_service.py
+python calculator.py --http --host 0.0.0.0 --port 8080
 ```
 
-## Testing with MCP Inspector
+The server will be available at `http://localhost:8008` (or your custom host:port).
 
-You can test these MCP servers using the MCP Inspector tool:
+### SSE Transport (Server-Sent Events)
+
+```bash
+python calculator.py --sse
+```
+
+Or with custom host and port:
+
+```bash
+python calculator.py --sse --host 0.0.0.0 --port 8080
+```
+
+The server will be available at `http://localhost:8008/sse` (or your custom host:port).
+
+## Available Tools
+
+### add
+
+Adds two numbers together.
+
+**Parameters:**
+- `a` (float): First number
+- `b` (float): Second number
+
+**Returns:**
+- `float`: The sum of a and b
+
+**Example:**
+```
+add(2.5, 3.7) → 6.2
+```
+
+## Testing
+
+You can test the server using the MCP Inspector:
 
 1. Install MCP Inspector:
    ```bash
    pip install "mcp[cli]"
    ```
 
-2. Run an MCP server in one terminal:
+2. Run the server in one terminal:
    ```bash
    python calculator.py
    ```
@@ -74,4 +83,15 @@ You can test these MCP servers using the MCP Inspector tool:
    mcp inspect
    ```
 
-4. Follow the prompts to connect to your MCP server and test the available tools.
+4. Follow the prompts to connect to your MCP server and test the addition tool.
+
+## Architecture
+
+This implementation demonstrates:
+
+- **FastMCP**: Using the FastMCP library for easy MCP server creation
+- **Multiple Transports**: Support for STDIO, HTTP, and SSE in a single file
+- **Error Handling**: Proper exception handling and logging
+- **Command Line Interface**: Argument parsing for different transport modes
+
+Perfect for blog articles and tutorials about MCP protocol implementation!
